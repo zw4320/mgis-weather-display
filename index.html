@@ -466,6 +466,11 @@
                 const data = await response.json();
                 console.log('Weather data received:', data);
                 
+                // Check if we have the required data
+                if (!data.forecast || !data.forecast.forecastday) {
+                    throw new Error('Unable to retrieve forecast data. Please try again.');
+                }
+                
                 displayWeather(data);
             } catch (err) {
                 console.error('Error details:', err);
@@ -476,30 +481,37 @@
         }
 
         function displayWeather(data) {
-            const location = data.location;
-            const current = data.current;
-            const forecast = data.forecast.forecastday[0];
+            try {
+                const location = data.location;
+                const current = data.current;
+                const forecast = data.forecast.forecastday[0];
 
-            // Display current weather
-            document.getElementById('cityName').textContent = location.name;
-            document.getElementById('region').textContent = `${location.region}, ${location.country}`;
-            document.getElementById('temperature').textContent = `${Math.round(current.temp_c)}°C`;
-            document.getElementById('description').textContent = current.condition.text;
-            document.getElementById('feelsLike').textContent = `Feels like ${Math.round(current.feelslike_c)}°C`;
-            document.getElementById('humidity').textContent = `${current.humidity}%`;
-            document.getElementById('windSpeed').textContent = `${current.wind_kph} km/h`;
-            document.getElementById('pressure').textContent = `${current.pressure_mb} mb`;
-            document.getElementById('uv').textContent = current.uv;
-            
-            // Set weather icon
-            const iconUrl = `https:${current.condition.icon}`;
-            document.getElementById('weatherIcon').src = iconUrl;
-            document.getElementById('weatherIcon').alt = current.condition.text;
+                // Display current weather
+                document.getElementById('cityName').textContent = location.name;
+                document.getElementById('region').textContent = `${location.region}, ${location.country}`;
+                document.getElementById('temperature').textContent = `${Math.round(current.temp_c)}°C`;
+                document.getElementById('description').textContent = current.condition.text;
+                document.getElementById('feelsLike').textContent = `Feels like ${Math.round(current.feelslike_c)}°C`;
+                document.getElementById('humidity').textContent = `${current.humidity}%`;
+                document.getElementById('windSpeed').textContent = `${current.wind_kph} km/h`;
+                document.getElementById('pressure').textContent = `${current.pressure_mb} mb`;
+                document.getElementById('uv').textContent = current.uv;
+                
+                // Set weather icon
+                const iconUrl = `https:${current.condition.icon}`;
+                document.getElementById('weatherIcon').src = iconUrl;
+                document.getElementById('weatherIcon').alt = current.condition.text;
 
-            // Display hourly forecast (next 24 hours)
-            displayHourlyForecast(forecast.hour);
+                // Display hourly forecast (next 24 hours)
+                if (forecast && forecast.hour) {
+                    displayHourlyForecast(forecast.hour);
+                }
 
-            showWeather();
+                showWeather();
+            } catch (error) {
+                console.error('Error displaying weather:', error);
+                showError('Error displaying weather data. Please try again.');
+            }
         }
 
         function displayHourlyForecast(hours) {
