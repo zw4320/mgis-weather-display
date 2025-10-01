@@ -114,6 +114,16 @@
             font-size: 1em;
         }
 
+        .weather-icon {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .weather-icon img {
+            width: 80px;
+            height: 80px;
+        }
+
         .main-temp {
             text-align: center;
             margin: 30px 0;
@@ -165,13 +175,13 @@
         }
 
         .api-info {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 20px;
             text-align: center;
-            color: #0c5460;
+            color: #155724;
             font-size: 0.9em;
         }
 
@@ -192,8 +202,8 @@
         <h1>🌤️ Weather Dashboard</h1>
         
         <div class="api-info">
-            <strong>📝 Setup Required:</strong>
-            Get a free API key from <a href="https://openweathermap.org/api" target="_blank">OpenWeatherMap</a> and add it on line 193 of the code
+            <strong>✅ Quick Setup (2 minutes):</strong>
+            Get instant free API key from <a href="https://www.weatherapi.com/signup.aspx" target="_blank">WeatherAPI.com</a> and add it on line 204
         </div>
 
         <div class="search-box">
@@ -207,7 +217,11 @@
         <div class="weather-info" id="weatherInfo">
             <div class="location">
                 <h2 id="cityName"></h2>
-                <p id="country"></p>
+                <p id="region"></p>
+            </div>
+
+            <div class="weather-icon">
+                <img id="weatherIcon" src="" alt="Weather icon">
             </div>
 
             <div class="main-temp">
@@ -230,17 +244,17 @@
                     <div class="detail-value" id="pressure"></div>
                 </div>
                 <div class="detail-box">
-                    <div class="detail-label">Visibility</div>
-                    <div class="detail-value" id="visibility"></div>
+                    <div class="detail-label">UV Index</div>
+                    <div class="detail-value" id="uv"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Replace with your OpenWeatherMap API key from https://openweathermap.org/api
-        const API_KEY = '197199efb21fadc58ee99bc5c364d16f';
-        const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+        // Replace with your WeatherAPI.com API key from https://www.weatherapi.com/signup.aspx
+        const API_KEY = 'c29d3e884271491d995140912250110';
+        const API_URL = 'https://api.weatherapi.com/v1/current.json';
 
         const cityInput = document.getElementById('cityInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -255,7 +269,7 @@
             }
 
             if (API_KEY === 'YOUR_API_KEY_HERE') {
-                showError('⚠️ Please add your OpenWeatherMap API key on line 193');
+                showError('⚠️ Please add your WeatherAPI.com API key on line 204');
                 return;
             }
 
@@ -264,8 +278,8 @@
             hideWeather();
 
             try {
-                // Build the API URL - OpenWeatherMap supports CORS!
-                const url = `${API_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
+                // WeatherAPI.com supports CORS and works instantly!
+                const url = `${API_URL}?key=${API_KEY}&q=${encodeURIComponent(city)}&aqi=no`;
                 
                 console.log('Fetching weather for:', city);
                 
@@ -274,10 +288,10 @@
                 console.log('Response status:', response.status);
 
                 if (!response.ok) {
-                    if (response.status === 404) {
+                    if (response.status === 400) {
                         throw new Error('City not found. Please check the spelling and try again.');
-                    } else if (response.status === 401) {
-                        throw new Error('Invalid API key. Please check your API key at openweathermap.org');
+                    } else if (response.status === 401 || response.status === 403) {
+                        throw new Error('Invalid API key. Please check your API key at weatherapi.com');
                     } else {
                         throw new Error(`API Error: ${response.status}`);
                     }
@@ -296,15 +310,23 @@
         }
 
         function displayWeather(data) {
-            document.getElementById('cityName').textContent = data.name;
-            document.getElementById('country').textContent = data.sys.country;
-            document.getElementById('temperature').textContent = `${Math.round(data.main.temp)}°C`;
-            document.getElementById('description').textContent = data.weather[0].description;
-            document.getElementById('feelsLike').textContent = `Feels like ${Math.round(data.main.feels_like)}°C`;
-            document.getElementById('humidity').textContent = `${data.main.humidity}%`;
-            document.getElementById('windSpeed').textContent = `${data.wind.speed} m/s`;
-            document.getElementById('pressure').textContent = `${data.main.pressure} hPa`;
-            document.getElementById('visibility').textContent = `${(data.visibility / 1000).toFixed(1)} km`;
+            const location = data.location;
+            const current = data.current;
+
+            document.getElementById('cityName').textContent = location.name;
+            document.getElementById('region').textContent = `${location.region}, ${location.country}`;
+            document.getElementById('temperature').textContent = `${Math.round(current.temp_c)}°C`;
+            document.getElementById('description').textContent = current.condition.text;
+            document.getElementById('feelsLike').textContent = `Feels like ${Math.round(current.feelslike_c)}°C`;
+            document.getElementById('humidity').textContent = `${current.humidity}%`;
+            document.getElementById('windSpeed').textContent = `${current.wind_kph} km/h`;
+            document.getElementById('pressure').textContent = `${current.pressure_mb} mb`;
+            document.getElementById('uv').textContent = current.uv;
+            
+            // Set weather icon
+            const iconUrl = `https:${current.condition.icon}`;
+            document.getElementById('weatherIcon').src = iconUrl;
+            document.getElementById('weatherIcon').alt = current.condition.text;
 
             showWeather();
         }
