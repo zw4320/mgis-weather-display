@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,6 +28,18 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 600px;
             width: 100%;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         h1 {
@@ -54,12 +66,12 @@
 
         #cityInput:focus {
             outline: none;
-            border-color: #0f2027;
+            border-color: #667eea;
         }
 
         #searchBtn {
             padding: 15px 30px;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -88,7 +100,7 @@
 
         .loading {
             text-align: center;
-            color: #0f2027;
+            color: #667eea;
             margin: 20px 0;
             display: none;
             font-size: 1.2em;
@@ -101,6 +113,7 @@
         .location {
             text-align: center;
             margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out 0.1s backwards;
         }
 
         .location h2 {
@@ -117,21 +130,24 @@
         .weather-icon {
             text-align: center;
             margin: 20px 0;
+            animation: fadeIn 0.5s ease-out 0.2s backwards;
         }
 
         .weather-icon img {
             width: 80px;
             height: 80px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
         }
 
         .main-temp {
             text-align: center;
             margin: 30px 0;
+            animation: fadeIn 0.5s ease-out 0.3s backwards;
         }
 
         .temp-display {
             font-size: 4em;
-            color: #0f2027;
+            color: #667eea;
             font-weight: bold;
         }
 
@@ -160,6 +176,29 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease-out backwards;
+        }
+
+        .detail-box:nth-child(1) { animation-delay: 0.1s; }
+        .detail-box:nth-child(2) { animation-delay: 0.2s; }
+        .detail-box:nth-child(3) { animation-delay: 0.3s; }
+        .detail-box:nth-child(4) { animation-delay: 0.4s; }
+
+        .detail-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .detail-label {
@@ -186,7 +225,7 @@
         }
 
         .api-info a {
-            color: #0f2027;
+            color: #667eea;
             text-decoration: none;
             font-weight: bold;
         }
@@ -206,7 +245,10 @@
             <button id="searchBtn">Search</button>
         </div>
 
-        <div class="loading" id="loading">🔍 Loading weather data...</div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading weather data...</p>
+        </div>
         <div class="error" id="error"></div>
 
         <div class="weather-info" id="weatherInfo">
@@ -344,7 +386,10 @@
         }
 
         function showWeather() {
-            weatherInfo.style.display = 'block';
+            // Small delay to ensure smooth animation
+            setTimeout(() => {
+                weatherInfo.style.display = 'block';
+            }, 100);
         }
 
         function hideWeather() {
