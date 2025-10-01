@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -54,12 +54,12 @@
 
         #cityInput:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #0f2027;
         }
 
         #searchBtn {
             padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -88,7 +88,7 @@
 
         .loading {
             text-align: center;
-            color: #667eea;
+            color: #0f2027;
             margin: 20px 0;
             display: none;
             font-size: 1.2em;
@@ -131,7 +131,7 @@
 
         .temp-display {
             font-size: 4em;
-            color: #667eea;
+            color: #0f2027;
             font-weight: bold;
         }
 
@@ -186,7 +186,7 @@
         }
 
         .api-info a {
-            color: #667eea;
+            color: #0f2027;
             text-decoration: none;
             font-weight: bold;
         }
@@ -200,11 +200,6 @@
 <body>
     <div class="container">
         <h1>🌤️ Weather Dashboard</h1>
-        
-        <div class="api-info">
-            <strong>✅ Quick Setup (2 minutes):</strong>
-            Get instant free API key from <a href="https://www.weatherapi.com/signup.aspx" target="_blank">WeatherAPI.com</a> and add it on line 204
-        </div>
 
         <div class="search-box">
             <input type="text" id="cityInput" placeholder="Enter city name (e.g., London, New York)">
