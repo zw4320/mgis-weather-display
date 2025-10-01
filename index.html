@@ -109,6 +109,11 @@
             margin-bottom: 5px;
         }
 
+        .location p {
+            color: #666;
+            font-size: 1em;
+        }
+
         .main-temp {
             text-align: center;
             margin: 30px 0;
@@ -118,6 +123,13 @@
             font-size: 4em;
             color: #667eea;
             font-weight: bold;
+        }
+
+        .weather-description {
+            color: #666;
+            font-size: 1.5em;
+            margin-top: 10px;
+            text-transform: capitalize;
         }
 
         .feels-like {
@@ -153,13 +165,13 @@
         }
 
         .api-info {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 20px;
             text-align: center;
-            color: #856404;
+            color: #0c5460;
             font-size: 0.9em;
         }
 
@@ -180,8 +192,8 @@
         <h1>🌤️ Weather Dashboard</h1>
         
         <div class="api-info">
-            <strong>⚠️ Setup Required:</strong>
-            Add your API key from <a href="https://api-ninjas.com/api/weather" target="_blank">API Ninjas</a> in line 187 of the code
+            <strong>📝 Setup Required:</strong>
+            Get a free API key from <a href="https://openweathermap.org/api" target="_blank">OpenWeatherMap</a> and add it on line 193 of the code
         </div>
 
         <div class="search-box">
@@ -195,10 +207,12 @@
         <div class="weather-info" id="weatherInfo">
             <div class="location">
                 <h2 id="cityName"></h2>
+                <p id="country"></p>
             </div>
 
             <div class="main-temp">
                 <div class="temp-display" id="temperature"></div>
+                <div class="weather-description" id="description"></div>
                 <div class="feels-like" id="feelsLike"></div>
             </div>
 
@@ -212,23 +226,21 @@
                     <div class="detail-value" id="windSpeed"></div>
                 </div>
                 <div class="detail-box">
-                    <div class="detail-label">Min / Max</div>
-                    <div class="detail-value" id="minMax"></div>
+                    <div class="detail-label">Pressure</div>
+                    <div class="detail-value" id="pressure"></div>
                 </div>
                 <div class="detail-box">
-                    <div class="detail-label">Cloud Coverage</div>
-                    <div class="detail-value" id="cloudCoverage"></div>
+                    <div class="detail-label">Visibility</div>
+                    <div class="detail-value" id="visibility"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_KEY = '52TsXRR0wxv7U1vxCbUYvA==Civ2PhcKobRdfjN5'; // Replace with your API Ninjas API key
-        
-        // Using CORS proxy to bypass browser restrictions
-        const CORS_PROXY = 'https://corsproxy.io/?';
-        const API_URL = 'https://api.api-ninjas.com/v1/weather';
+        // Replace with your OpenWeatherMap API key from https://openweathermap.org/api
+        const API_KEY = 'YOUR_API_KEY_HERE';
+        const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
         const cityInput = document.getElementById('cityInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -243,7 +255,7 @@
             }
 
             if (API_KEY === 'YOUR_API_KEY_HERE') {
-                showError('⚠️ Please add your API key in the JavaScript code (line 187)');
+                showError('⚠️ Please add your OpenWeatherMap API key on line 193');
                 return;
             }
 
@@ -252,33 +264,29 @@
             hideWeather();
 
             try {
-                const url = `${API_URL}?city=${encodeURIComponent(city)}`;
+                // Build the API URL - OpenWeatherMap supports CORS!
+                const url = `${API_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`;
                 
-                const response = await fetch(CORS_PROXY + encodeURIComponent(url), {
-                    method: 'GET',
-                    headers: {
-                        'X-Api-Key': API_KEY
-                    }
-                });
+                console.log('Fetching weather for:', city);
+                
+                const response = await fetch(url);
+
+                console.log('Response status:', response.status);
 
                 if (!response.ok) {
                     if (response.status === 404) {
                         throw new Error('City not found. Please check the spelling and try again.');
                     } else if (response.status === 401) {
-                        throw new Error('Invalid API key. Please check your API key.');
+                        throw new Error('Invalid API key. Please check your API key at openweathermap.org');
                     } else {
                         throw new Error(`API Error: ${response.status}`);
                     }
                 }
 
                 const data = await response.json();
+                console.log('Weather data received:', data);
                 
-                // Validate that we received weather data
-                if (!data || typeof data.temp === 'undefined') {
-                    throw new Error('Invalid data received from API');
-                }
-                
-                displayWeather(data, city);
+                displayWeather(data);
             } catch (err) {
                 console.error('Error details:', err);
                 showError(err.message || 'Unable to fetch weather data. Please try again.');
@@ -287,19 +295,16 @@
             }
         }
 
-        function displayWeather(data, city) {
-            // Capitalize city name properly
-            const formattedCity = city.split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join(' ');
-            
-            document.getElementById('cityName').textContent = formattedCity;
-            document.getElementById('temperature').textContent = `${data.temp}°C`;
-            document.getElementById('feelsLike').textContent = `Feels like ${data.feels_like}°C`;
-            document.getElementById('humidity').textContent = `${data.humidity}%`;
-            document.getElementById('windSpeed').textContent = `${data.wind_speed} m/s`;
-            document.getElementById('minMax').textContent = `${data.min_temp}° / ${data.max_temp}°`;
-            document.getElementById('cloudCoverage').textContent = `${data.cloud_pct}%`;
+        function displayWeather(data) {
+            document.getElementById('cityName').textContent = data.name;
+            document.getElementById('country').textContent = data.sys.country;
+            document.getElementById('temperature').textContent = `${Math.round(data.main.temp)}°C`;
+            document.getElementById('description').textContent = data.weather[0].description;
+            document.getElementById('feelsLike').textContent = `Feels like ${Math.round(data.main.feels_like)}°C`;
+            document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+            document.getElementById('windSpeed').textContent = `${data.wind.speed} m/s`;
+            document.getElementById('pressure').textContent = `${data.main.pressure} hPa`;
+            document.getElementById('visibility').textContent = `${(data.visibility / 1000).toFixed(1)} km`;
 
             showWeather();
         }
@@ -338,9 +343,6 @@
                 getWeather(cityInput.value);
             }
         });
-
-        // Optional: Test on page load with a default city (remove or comment out after testing)
-        // setTimeout(() => getWeather('London'), 1000);
     </script>
 </body>
 </html>
