@@ -25,8 +25,8 @@
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 1200px;
             width: 100%;
             animation: scaleIn 0.5s ease-out;
         }
@@ -201,6 +201,122 @@
             }
         }
 
+        .hourly-forecast {
+            margin-top: 40px;
+            animation: fadeIn 0.6s ease-out 0.5s backwards;
+        }
+
+        .hourly-forecast h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hourly-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+        }
+
+        .hourly-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .hourly-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .hourly-scroll::-webkit-scrollbar-thumb {
+            background: #1a1a2e;
+            border-radius: 10px;
+        }
+
+        .hourly-scroll::-webkit-scrollbar-thumb:hover {
+            background: #16213e;
+        }
+
+        .hourly-card {
+            min-width: 120px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hourly-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hourly-time {
+            font-weight: bold;
+            color: #1a1a2e;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .hourly-icon img {
+            width: 50px;
+            height: 50px;
+            margin: 10px 0;
+        }
+
+        .hourly-temp {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .hourly-condition {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .current-weather {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .current-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .current-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .current-weather {
+                grid-template-columns: 1fr;
+            }
+
+            .temp-display {
+                font-size: 3em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 25px;
+            }
+        }
+
         .detail-label {
             color: #666;
             font-size: 0.9em;
@@ -257,32 +373,44 @@
                 <p id="region"></p>
             </div>
 
-            <div class="weather-icon">
-                <img id="weatherIcon" src="" alt="Weather icon">
+            <div class="current-weather">
+                <div class="current-left">
+                    <div class="weather-icon">
+                        <img id="weatherIcon" src="" alt="Weather icon">
+                    </div>
+                    <div class="main-temp">
+                        <div class="temp-display" id="temperature"></div>
+                        <div class="weather-description" id="description"></div>
+                        <div class="feels-like" id="feelsLike"></div>
+                    </div>
+                </div>
+
+                <div class="current-right">
+                    <div class="weather-details">
+                        <div class="detail-box">
+                            <div class="detail-label">Humidity</div>
+                            <div class="detail-value" id="humidity"></div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Wind Speed</div>
+                            <div class="detail-value" id="windSpeed"></div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Pressure</div>
+                            <div class="detail-value" id="pressure"></div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">UV Index</div>
+                            <div class="detail-value" id="uv"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="main-temp">
-                <div class="temp-display" id="temperature"></div>
-                <div class="weather-description" id="description"></div>
-                <div class="feels-like" id="feelsLike"></div>
-            </div>
-
-            <div class="weather-details">
-                <div class="detail-box">
-                    <div class="detail-label">Humidity</div>
-                    <div class="detail-value" id="humidity"></div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Wind Speed</div>
-                    <div class="detail-value" id="windSpeed"></div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Pressure</div>
-                    <div class="detail-value" id="pressure"></div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">UV Index</div>
-                    <div class="detail-value" id="uv"></div>
+            <div class="hourly-forecast">
+                <h3>24-Hour Forecast</h3>
+                <div class="hourly-scroll" id="hourlyForecast">
+                    <!-- Hourly cards will be added here by JavaScript -->
                 </div>
             </div>
         </div>
@@ -316,7 +444,8 @@
 
             try {
                 // WeatherAPI.com supports CORS and works instantly!
-                const url = `${API_URL}?key=${API_KEY}&q=${encodeURIComponent(city)}&aqi=no`;
+                // Request forecast for 1 day (includes 24 hours of hourly data)
+                const url = `${API_URL}?key=${API_KEY}&q=${encodeURIComponent(city)}&days=1&aqi=no&alerts=no`;
                 
                 console.log('Fetching weather for:', city);
                 
@@ -349,7 +478,9 @@
         function displayWeather(data) {
             const location = data.location;
             const current = data.current;
+            const forecast = data.forecast.forecastday[0];
 
+            // Display current weather
             document.getElementById('cityName').textContent = location.name;
             document.getElementById('region').textContent = `${location.region}, ${location.country}`;
             document.getElementById('temperature').textContent = `${Math.round(current.temp_c)}°C`;
@@ -365,7 +496,45 @@
             document.getElementById('weatherIcon').src = iconUrl;
             document.getElementById('weatherIcon').alt = current.condition.text;
 
+            // Display hourly forecast (next 24 hours)
+            displayHourlyForecast(forecast.hour);
+
             showWeather();
+        }
+
+        function displayHourlyForecast(hours) {
+            const hourlyContainer = document.getElementById('hourlyForecast');
+            hourlyContainer.innerHTML = '';
+
+            // Get current hour
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // Display next 24 hours
+            hours.forEach((hour, index) => {
+                const hourTime = new Date(hour.time);
+                const hourNum = hourTime.getHours();
+
+                // Format time (12-hour format)
+                let displayHour = hourNum % 12;
+                if (displayHour === 0) displayHour = 12;
+                const ampm = hourNum >= 12 ? 'PM' : 'AM';
+                const timeString = `${displayHour} ${ampm}`;
+
+                // Create hourly card
+                const card = document.createElement('div');
+                card.className = 'hourly-card';
+                card.innerHTML = `
+                    <div class="hourly-time">${timeString}</div>
+                    <div class="hourly-icon">
+                        <img src="https:${hour.condition.icon}" alt="${hour.condition.text}">
+                    </div>
+                    <div class="hourly-temp">${Math.round(hour.temp_c)}°C</div>
+                    <div class="hourly-condition">${hour.condition.text}</div>
+                `;
+
+                hourlyContainer.appendChild(card);
+            });
         }
 
         function showLoading() {
