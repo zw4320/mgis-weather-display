@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -45,14 +45,78 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-size: 2.5em;
+        }
+
+        .rit-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .rit-logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        .rit-title {
+            text-align: center;
+        }
+
+        .rit-title h1 {
+            margin: 0;
+            color: #F76902;
+            font-size: 2.2em;
+        }
+
+        .rit-title p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 1em;
         }
 
         .search-box {
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .unit-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid #000000;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:first-child {
+            border-radius: 10px 0 0 10px;
+            border-right: 1px solid #000000;
+        }
+
+        .toggle-btn:last-child {
+            border-radius: 0 10px 10px 0;
+            border-left: 1px solid #000000;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #F76902 0%, #D35400 100%);
+            color: white;
+            border-color: #F76902;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: #e0e0e0;
         }
 
         #cityInput {
@@ -66,13 +130,13 @@
 
         #cityInput:focus {
             outline: none;
-            border-color: #1a1a2e;
-            box-shadow: 0 0 0 3px rgba(26, 26, 46, 0.1);
+            border-color: #F76902;
+            box-shadow: 0 0 0 3px rgba(247, 105, 2, 0.1);
         }
 
         #searchBtn {
             padding: 15px 30px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #F76902 0%, #D35400 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -105,13 +169,13 @@
 
         #searchBtn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(26, 26, 46, 0.6);
-            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            box-shadow: 0 8px 20px rgba(247, 105, 2, 0.6);
+            background: linear-gradient(135deg, #FF8C00 0%, #F76902 100%);
         }
 
         #searchBtn:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(26, 26, 46, 0.4);
+            box-shadow: 0 2px 8px rgba(247, 105, 2, 0.4);
         }
 
         .error {
@@ -133,7 +197,7 @@
 
         .loading {
             text-align: center;
-            color: #1a1a2e;
+            color: #F76902;
             margin: 40px 0;
             display: none;
             font-size: 1.2em;
@@ -145,7 +209,7 @@
             height: 50px;
             margin: 0 auto 20px;
             border: 4px solid #e0e0e0;
-            border-top: 4px solid #1a1a2e;
+            border-top: 4px solid #F76902;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -225,7 +289,7 @@
 
         .temp-display {
             font-size: 4em;
-            color: #1a1a2e;
+            color: #F76902;
             font-weight: bold;
         }
 
@@ -321,12 +385,12 @@
         }
 
         .hourly-scroll::-webkit-scrollbar-thumb {
-            background: #1a1a2e;
+            background: #F76902;
             border-radius: 10px;
         }
 
         .hourly-scroll::-webkit-scrollbar-thumb:hover {
-            background: #16213e;
+            background: #D35400;
         }
 
         .hourly-card {
@@ -346,7 +410,7 @@
 
         .hourly-time {
             font-weight: bold;
-            color: #1a1a2e;
+            color: #F76902;
             font-size: 1em;
             margin-bottom: 10px;
         }
@@ -391,11 +455,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌤️ Weather Dashboard</h1>
+        <div class="rit-header">
+            <img src="https://www.rit.edu/contentassets/0e4a969fc16149469bce9d924f286620/rit_logo.png" alt="RIT Logo" class="rit-logo">
+            <div class="rit-title">
+                <h1>🌤️ RIT Weather Dashboard</h1>
+                <p>Rochester Institute of Technology</p>
+            </div>
+        </div>
 
         <div class="search-box">
-            <input type="text" id="cityInput" placeholder="Enter city name (e.g., London, New York)">
+            <input type="text" id="cityInput" placeholder="Enter city name (default: Rochester, NY)" value="Rochester">
             <button id="searchBtn">Search</button>
+        </div>
+
+        <div class="unit-toggle">
+            <button class="toggle-btn active" id="celsiusBtn">°C</button>
+            <button class="toggle-btn" id="fahrenheitBtn">°F</button>
         </div>
 
         <div class="loading" id="loading">
@@ -462,6 +537,11 @@
         const weatherInfo = document.getElementById('weatherInfo');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
+        const celsiusBtn = document.getElementById('celsiusBtn');
+        const fahrenheitBtn = document.getElementById('fahrenheitBtn');
+
+        let currentUnit = 'C';
+        let weatherData = null;
 
         async function getWeather(city) {
             if (!city.trim()) {
@@ -499,6 +579,7 @@
                     throw new Error('Unable to retrieve forecast data. Please try again.');
                 }
                 
+                weatherData = data;
                 displayWeather(data);
             } catch (err) {
                 console.error('Error details:', err);
@@ -516,9 +597,13 @@
 
                 document.getElementById('cityName').textContent = location.name;
                 document.getElementById('region').textContent = `${location.region}, ${location.country}`;
-                document.getElementById('temperature').textContent = `${Math.round(current.temp_c)}°C`;
+                
+                const temp = currentUnit === 'C' ? current.temp_c : current.temp_f;
+                const feelsLike = currentUnit === 'C' ? current.feelslike_c : current.feelslike_f;
+                
+                document.getElementById('temperature').textContent = `${Math.round(temp)}°${currentUnit}`;
                 document.getElementById('description').textContent = current.condition.text;
-                document.getElementById('feelsLike').textContent = `Feels like ${Math.round(current.feelslike_c)}°C`;
+                document.getElementById('feelsLike').textContent = `Feels like ${Math.round(feelsLike)}°${currentUnit}`;
                 document.getElementById('humidity').textContent = `${current.humidity}%`;
                 document.getElementById('windSpeed').textContent = `${current.wind_kph} km/h`;
                 document.getElementById('pressure').textContent = `${current.pressure_mb} mb`;
@@ -548,7 +633,20 @@
                 return;
             }
 
-            hours.forEach((hour) => {
+            // Get current time
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // Filter hours to show only upcoming hours (starting from current hour)
+            const upcomingHours = hours.filter(hour => {
+                const hourTime = new Date(hour.time);
+                return hourTime >= now;
+            });
+
+            // If we have upcoming hours, display them
+            const hoursToDisplay = upcomingHours.length > 0 ? upcomingHours : hours;
+
+            hoursToDisplay.forEach((hour) => {
                 const hourTime = new Date(hour.time);
                 const hourNum = hourTime.getHours();
 
@@ -557,6 +655,8 @@
                 const ampm = hourNum >= 12 ? 'PM' : 'AM';
                 const timeString = `${displayHour} ${ampm}`;
 
+                const temp = currentUnit === 'C' ? hour.temp_c : hour.temp_f;
+
                 const card = document.createElement('div');
                 card.className = 'hourly-card';
                 card.innerHTML = `
@@ -564,7 +664,7 @@
                     <div class="hourly-icon">
                         <img src="https:${hour.condition.icon}" alt="${hour.condition.text}">
                     </div>
-                    <div class="hourly-temp">${Math.round(hour.temp_c)}°C</div>
+                    <div class="hourly-temp">${Math.round(temp)}°${currentUnit}</div>
                     <div class="hourly-condition">${hour.condition.text}</div>
                 `;
 
@@ -606,6 +706,35 @@
         cityInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 getWeather(cityInput.value);
+            }
+        });
+
+        // Load Rochester weather on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                getWeather('Rochester');
+            }, 500);
+        });
+
+        celsiusBtn.addEventListener('click', () => {
+            if (currentUnit !== 'C') {
+                currentUnit = 'C';
+                celsiusBtn.classList.add('active');
+                fahrenheitBtn.classList.remove('active');
+                if (weatherData) {
+                    displayWeather(weatherData);
+                }
+            }
+        });
+
+        fahrenheitBtn.addEventListener('click', () => {
+            if (currentUnit !== 'F') {
+                currentUnit = 'F';
+                fahrenheitBtn.classList.add('active');
+                celsiusBtn.classList.remove('active');
+                if (weatherData) {
+                    displayWeather(weatherData);
+                }
             }
         });
     </script>
